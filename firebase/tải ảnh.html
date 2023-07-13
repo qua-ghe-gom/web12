@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.5.0/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCg_mOb92Ad9mUFcSSs7_0Qn7dMwq0msx8",
+            authDomain: "a7-d9048.firebaseapp.com",
+            projectId: "a7-d9048",
+            storageBucket: "a7-d9048.appspot.com",
+            messagingSenderId: "364919846264",
+            appId: "1:364919846264:web:198a4110d29759bb2c848d",
+            measurementId: "G-FKQP1XJMJN"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        async function addFilesFromDirectoryToZip(directoryPath = "", zip) {
+            const storage = firebase.storage();
+            const directoryContentsRef = storage.ref(directoryPath);
+            const directoryContents = await directoryContentsRef.listAll();
+
+            for (const file of directoryContents.items) {
+                const fileRef = storage.ref(file.fullPath);
+                const url = await fileRef.getDownloadURL();
+                const response = await fetch(url);
+                const blob = await response.blob();
+                zip.file(file.fullPath, blob);
+            }
+
+            for (const folder of directoryContents.prefixes) {
+                await addFilesFromDirectoryToZip(folder.fullPath, zip);
+            }
+        };
+
+        async function downloadFolderAsZip(directoryPath = "") {
+            const zip = new JSZip();
+            await addFilesFromDirectoryToZip(directoryPath, zip);
+            const blob = await zip.generateAsync({ type: "blob" });
+            const name = directoryPath.split('/').pop();
+            saveAs(blob, name + '.zip');
+        };
+
+        window.onload = function() {
+            document.getElementById("downloadButton").addEventListener('click', function() {
+                downloadFolderAsZip('test');
+            });
+        };
+    </script>
+</head>
+<body>
+    <button id="downloadButton">Tải xuống thư mục dưới dạng ZIP</button>
+</body>
+</html>
