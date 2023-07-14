@@ -11,100 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/font-awesome-6-pro/css/fontawesome6.css">
     <link rel="stylesheet" href="../css/style.css" />
-    <style>
-        
-        .modal-content{
-            background-color: var(--bg); /* Dành cho nền trắng */
-        }
-        .modal-content .modal-header h5.modal-title {
-            color: #151c28;
-        }
-        body.active .modal-content .modal-header h5.modal-title {
-            color: #d7deea;
-        }
-
-        /* Đặt giá trị mặc định cho .card-img-top */
-        .card-img-top {
-        mix-blend-mode: inherit; /* Dành cho nền trắng */
-        }
-
-        /* Thay đổi giá trị cho .card-img-top khi body có class "active" */
-        body.active .card-img-top {
-        mix-blend-mode: initial; /* hoặc bất kỳ giá trị nào bạn muốn dành cho dark mode */
-        }
-
-        .ten{
-            z-index: 101;
-        }
-        header {
-            z-index: 100;
-        }
-        h5 {
-            font-family: 'Roboto Slab', serif;
-            font-size:x-large;
-        }
-
-        .card {
-            min-height: 100%;
-            min-width: 100%;
-            mix-blend-mode: difference;
-        }
-
-
-        .gallery-title {
-            margin-top: 20px;
-        }
-
-        .gallery-title h1 {
-            font-size: 36px;
-            text-align: center;
-        }
-
-        .gallery-title h1 small {
-            font-size: 18px;
-            color: #999;
-        }
-
-        .gallery img {
-            width: 100%;
-            height: auto;
-        }
-
-        .modal-body {
-            text-align: center;
-        }
-
-        .modal-body img {
-            width: auto;
-            height: auto;
-            max-height: 600px;
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 768px) {
-            .card-body {
-                padding: 10px;
-            }
-
-            .gallery-title h1 {
-                font-size: 28px;
-            }
-
-            .gallery-title h1 small {
-                font-size: 16px;
-            }
-
-            .gallery img {
-                margin-bottom: 30px;
-            }
-
-            .modal-body img {
-                max-height: 300px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../css/monhoc.css">
 </head>
 
 <body>
@@ -113,7 +22,12 @@
     <!--  -->
     
     <div class="space-menu">
-        <h1>Đại số</h1>
+        <h1>
+            <i class="fa-duotone fa-calculator"></i>
+            Toán
+            <i class="fa-sharp fa-regular fa-calculator"></i>
+        </h1>
+        <h1>==Đại số==</h1>
 
         <!-- lấy ảnh và tiêu đề -->
         <div class="container">

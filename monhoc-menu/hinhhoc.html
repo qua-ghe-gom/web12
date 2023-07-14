@@ -8,7 +8,12 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/font-awesome-6-pro/css/fontawesome6.css">
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/monhoc.css">
 </head>
 
 <body>
@@ -16,17 +21,40 @@
     <header></header>
     <!--  -->
     
-<div class="space-menu">
-    <h1>hình học</h1>
+    <div class="space-menu">
+        <h1>
+            <i class="fa-duotone fa-calculator"></i>
+            Toán
+            <i class="fa-sharp fa-regular fa-calculator"></i>
+        </h1>
+        <h1>==Hình Học==</h1>
 
-    
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    
-    
-</div>
+        <!-- lấy ảnh và tiêu đề -->
+        <div class="container">
+            <div class="gallery-title"></div>
+            <div id="gallery" class="row"></div>
+        </div>
 
+        <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalImages" class="row"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="prevButton">Quay lại</button>
+                        <button type="button" class="btn btn-primary" id="nextButton">Tiếp theo</button>
+                    </div>
+                </div> 
+            </div>
+        </div>
 
-
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
 
 
 
@@ -209,13 +237,227 @@
 </div>
 
 
-
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
 <script src="../script/button.js"></script>
 <script src="../script/latvat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCg_mOb92Ad9mUFcSSs7_0Qn7dMwq0msx8",
+      authDomain: "a7-d9048.firebaseapp.com",
+      projectId: "a7-d9048",
+      storageBucket: "a7-d9048.appspot.com",
+      messagingSenderId: "364919846264",
+      appId: "1:364919846264:web:198a4110d29759bb2c848d",
+      measurementId: "G-FKQP1XJMJN"
+    };
+  // Khởi tạo Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  // Lấy và hiển thị danh sách ảnh đã tải lên
+  var databaseRef = firebase.database().ref('uploads/Toan/BaiTap');   /* TRỎ ĐƯỜNG LINK CHO HỢP LÝ */
+  databaseRef.once('value').then(function(snapshot) {
+      var uploads = snapshot.val();
+  
+      if (uploads) {
+          // Sử dụng đối tượng để nhóm các ảnh theo tiêu đề
+          var groupedUploads = {};
+  
+          Object.keys(uploads).forEach(function(key) {
+              var upload = uploads[key];
+              var title = upload.title;
+  
+              if (groupedUploads[title]) {
+                  // Nếu tiêu đề đã tồn tại, thêm ảnh vào nhóm
+                  groupedUploads[title].push(upload);
+              } else {
+                  // Nếu tiêu đề chưa tồn tại, tạo một nhóm mới
+                  groupedUploads[title] = [upload];
+              }
+          });
+  
+          // Hiển thị danh sách ảnh theo nhóm đã gộp
+          var galleryElement = document.getElementById("gallery");
+  
+          Object.keys(groupedUploads).forEach(function(title) {
+              var cardElement = document.createElement("div");
+              cardElement.classList.add("col-md-4", "mb-4");
+  
+              var cardBodyElement = document.createElement("div");
+              cardBodyElement.classList.add("card", "h-100");
+  
+              groupedUploads[title].forEach(function(upload, index) {
+                  var imageUrl = upload.imageUrl;
+  
+                  if (index === 0) {
+                      var sampleImageElement = document.createElement("img");
+                      sampleImageElement.classList.add("card-img-top");
+                      sampleImageElement.src = imageUrl;
+                      sampleImageElement.alt = title;
+  
+                      sampleImageElement.addEventListener("click", function() {
+                          showImageModal(groupedUploads[title]);
+                      });
+  
+                      cardBodyElement.appendChild(sampleImageElement);
+                  }
+  
+                  var imageElement = document.createElement("img");
+                  imageElement.classList.add("d-none");
+                  imageElement.src = imageUrl;
+                  imageElement.alt = title;
+  
+                  cardBodyElement.appendChild(imageElement);
+              });
+  
+              var cardTitleElement = document.createElement("h5");
+              cardTitleElement.classList.add("card-title", "text-center");
+              cardTitleElement.textContent = title;
+  
+              cardBodyElement.appendChild(cardTitleElement);
+  
+              cardElement.appendChild(cardBodyElement);
+  
+              galleryElement.appendChild(cardElement);
+          });
+      } else {
+          var noDataElement = document.createElement("p");
+          noDataElement.classList.add("text-center");
+          noDataElement.textContent = "Không có ảnh.";
+          var galleryElement = document.getElementById("gallery");
+          galleryElement.appendChild(noDataElement);
+      }
+  }).catch(function(error) {
+      console.log("Lỗi lấy danh sách ảnh: " + error);
+  });
+  
+  function showImageModal(images) {
+      var modalTitleElement = document.getElementById("modalTitle");
+      var modalImagesElement = document.getElementById("modalImages");
+  
+      modalTitleElement.textContent = images[0].title;
+      modalImagesElement.innerHTML = "";
+  
+      images.forEach(function (upload, index) {
+          var imageUrl = upload.imageUrl;
+  
+          var imageElement = document.createElement("img");
+          imageElement.classList.add("col-md-4", "mb-4");
+          imageElement.src = imageUrl;
+          imageElement.alt = upload.title;
+  
+          modalImagesElement.appendChild(imageElement);
+  
+          imageElement.addEventListener("click", function () {
+              showSelectedImage(this, images);
+          });
+      });
+  
+      $('#imageModal').modal('show');
+  
+      // Xóa các footer cũ trước khi thêm footer mới
+      var modalFooterElements = document.querySelectorAll("#imageModal .modal-footer");
+      modalFooterElements.forEach(function (footer) {
+          footer.remove();
+      });
+  
+      // Thêm nút điều hướng để chuyển đến ảnh tiếp theo hoặc quay lại ảnh trước đó
+      var nextButton = document.createElement("button");
+      nextButton.classList.add("btn", "btn-primary", "mr-2");
+      nextButton.textContent = "Tiếp theo";
+      nextButton.addEventListener("click", function () {
+          var currentIndex = Array.from(modalImagesElement.getElementsByTagName("img")).indexOf(modalImagesElement.querySelector("img:not(.d-none)"));
+          showNextImage(currentIndex, images);
+      });
+  
+      var prevButton = document.createElement("button");
+      prevButton.classList.add("btn", "btn-primary");
+      prevButton.textContent = "Quay lại";
+      prevButton.addEventListener("click", function () {
+          var currentIndex = Array.from(modalImagesElement.getElementsByTagName("img")).indexOf(modalImagesElement.querySelector("img:not(.d-none)"));
+          showPrevImage(currentIndex, images);
+      });
+  
+      var modalFooter = document.createElement("div");
+      modalFooter.classList.add("modal-footer");
+      modalFooter.appendChild(prevButton);
+      modalFooter.appendChild(nextButton);
+  
+      var modalContent = document.querySelector("#imageModal .modal-content");
+      modalContent.appendChild(modalFooter);
+  }
+  
+  function showSelectedImage(imageElement, images) {
+      var modalTitleElement = document.getElementById("modalTitle");
+      var modalImages = document.getElementById("modalImages");
+      var imageElements = modalImages.getElementsByTagName("img");
+      var currentIndex = Array.from(imageElements).indexOf(imageElement);
+  
+      modalTitleElement.textContent = images[currentIndex].title;
+  
+      for (var i = 0; i < imageElements.length; i++) {
+          imageElements[i].classList.add("d-none");
+      }
+  
+      imageElements[currentIndex].classList.remove("d-none");
+  }
+  
+  function showNextImage(currentIndex, images) {
+      var nextIndex = (currentIndex + 1) % images.length;
+      var modalTitleElement = document.getElementById("modalTitle");
+      var modalImages = document.getElementById("modalImages");
+      var imageElements = modalImages.getElementsByTagName("img");
+  
+      modalTitleElement.textContent = images[nextIndex].title;
+  
+      for (var i = 0; i < imageElements.length; i++) {
+          imageElements[i].classList.add("d-none");
+      }
+  
+      imageElements[nextIndex].classList.remove("d-none");
+  }
+  
+  function showPrevImage(currentIndex, images) {
+      var prevIndex = (currentIndex - 1 + images.length) % images.length;
+      var modalTitleElement = document.getElementById("modalTitle");
+      var modalImages = document.getElementById("modalImages");
+      var imageElements = modalImages.getElementsByTagName("img");
+  
+      modalTitleElement.textContent = images[prevIndex].title;
+  
+      for (var i = 0; i < imageElements.length; i++) {
+          imageElements[i].classList.add("d-none");
+      }
+  
+      imageElements[prevIndex].classList.remove("d-none");
+  }
+  
+  document.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowRight") {
+          var modalImages = document.getElementById("modalImages");
+          var visibleImage = modalImages.querySelector("img:not(.d-none)");
+  
+          if (visibleImage) {
+              var images = Array.from(modalImages.getElementsByTagName("img"));
+              var currentIndex = images.indexOf(visibleImage);
+              showNextImage(currentIndex, images);
+          }
+      } else if (event.key === "ArrowLeft") {
+          var modalImages = document.getElementById("modalImages");
+          var visibleImage = modalImages.querySelector("img:not(.d-none)");
+  
+          if (visibleImage) {
+              var images = Array.from(modalImages.getElementsByTagName("img"));
+              var currentIndex = images.indexOf(visibleImage);
+              showPrevImage(currentIndex, images);
+          }
+      }
+  });
 
-
+  </script>
 </body>
 
 </html>

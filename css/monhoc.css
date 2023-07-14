@@ -1,0 +1,91 @@
+ 
+        .modal-content{
+            background-color: var(--bg); /* Dành cho nền trắng */
+        }
+        .modal-content .modal-header h5.modal-title {
+            color: #151c28;
+        }
+        body.active .modal-content .modal-header h5.modal-title {
+            color: #d7deea;
+        }
+
+        /* Đặt giá trị mặc định cho .card-img-top */
+        .card-img-top {
+        mix-blend-mode: inherit; /* Dành cho nền trắng */
+        }
+
+        /* Thay đổi giá trị cho .card-img-top khi body có class "active" */
+        body.active .card-img-top {
+        mix-blend-mode: initial; /* hoặc bất kỳ giá trị nào bạn muốn dành cho dark mode */
+        }
+
+        .ten{
+            z-index: 101;
+        }
+        header {
+            z-index: 100;
+        }
+        h5 {
+            font-family: 'Roboto Slab', serif;
+            font-size:x-large;
+        }
+
+        .card {
+            min-height: 100%;
+            min-width: 100%;
+            mix-blend-mode: difference;
+        }
+
+
+        .gallery-title {
+            margin-top: 20px;
+        }
+
+        .gallery-title h1 {
+            font-size: 36px;
+            text-align: center;
+        }
+
+        .gallery-title h1 small {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: auto;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .modal-body img {
+            width: auto;
+            height: auto;
+            max-height: 600px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 10px;
+            }
+
+            .gallery-title h1 {
+                font-size: 28px;
+            }
+
+            .gallery-title h1 small {
+                font-size: 16px;
+            }
+
+            .gallery img {
+                margin-bottom: 30px;
+            }
+
+            .modal-body img {
+                max-height: 300px;
+            }
+        }
