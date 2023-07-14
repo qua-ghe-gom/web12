@@ -326,152 +326,154 @@
 <script>
             // Cấu hình Firebase
             const firebaseConfig = {
-            apiKey: "AIzaSyB7Hc4JXr2jo9hRQ-edZWSoZOVry5lMYM0",
-            authDomain: "lop11-ae056.firebaseapp.com",
-            databaseURL: "https://lop11-ae056-default-rtdb.firebaseio.com",
-            projectId: "lop11-ae056",
-            storageBucket: "lop11-ae056.appspot.com",
-            messagingSenderId: "776228511575",
-            appId: "1:776228511575:web:b4db046ccb572e921d6812",
-            measurementId: "G-R48PK1S9N6"
-        };
-    
+                apiKey: "AIzaSyCg_mOb92Ad9mUFcSSs7_0Qn7dMwq0msx8",
+                authDomain: "a7-d9048.firebaseapp.com",
+                databaseURL: "https://a7-d9048-default-rtdb.firebaseio.com",
+                projectId: "a7-d9048",
+                storageBucket: "a7-d9048.appspot.com",
+                messagingSenderId: "364919846264",
+                appId: "1:364919846264:web:198a4110d29759bb2c848d",
+                measurementId: "G-FKQP1XJMJN"
+            };
         // Khởi tạo Firebase
-        firebase.initializeApp(firebaseConfig);
-    
-        // Lưu trữ giá trị môn học và loại bài tập được chọn trước đó
-        var previousSubject = "";
-        var previousExerciseType = "";
-    
-        // Biến toàn cục để lưu trữ nhiệm vụ upload
-        var uploadTask = null;
-    
-        // Lắng nghe sự kiện submit form
-        document.getElementById("uploadForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-    
-            // Kiểm tra xem có nhiệm vụ upload đang diễn ra hay không
-            if (uploadTask !== null) {
-                // Hủy bỏ nhiệm vụ upload hiện tại
-                uploadTask.cancel();
+firebase.initializeApp(firebaseConfig);
+
+// Lưu trữ giá trị môn học và loại bài tập được chọn trước đó
+let previousSubject = "";
+let previousExerciseType = "";
+
+// Biến toàn cục để lưu trữ nhiệm vụ upload
+let uploadTask = null;
+
+// Lắng nghe sự kiện submit form
+document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  if (uploadTask !== null) {
+    uploadTask.cancel();
+  }
+
+  const files = document.getElementById("image").files;
+  const title = document.getElementById("title").value;
+  const subject = document.getElementById("subject").value;
+  const exerciseType = document.getElementById("exerciseType").value;
+
+  if (files.length > 0 && title) {
+    try {
+      const promises = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        let folderName = "";
+
+        if (subject === "Toan") {
+          folderName = "test/toan/" + (exerciseType === "LyThuyet" ? "daiso" : "hinhhoc");
+        } else {
+          folderName = "test/" + subject.toLowerCase() + (exerciseType === "LyThuyet" ? "/lythuyet" : "/baitap");
+        }
+
+        const storageRef = firebase.storage().ref().child(folderName + "/" + file.name);
+        uploadTask = storageRef.put(file);
+
+        const promise = new Promise(function(resolve, reject) {
+          uploadTask.on(
+            "state_changed",
+            function(snapshot) {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              const progressBar = document.querySelector("#progress .progress-bar");
+              progressBar.style.width = progress.toFixed(2) + "%";
+              progressBar.setAttribute("aria-valuenow", progress.toFixed(2));
+              progressBar.innerHTML = progress.toFixed(2) + "%";
+
+              // Kiểm tra xem tiến trình đã hoàn thành 100% chưa
+              if (progress === 100) {
+                progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
+              }
+            },
+            function(error) {
+              reject(error);
+            },
+            async function() {
+              try {
+                const downloadURL = await storageRef.getDownloadURL();
+                resolve({
+                  title: title,
+                  imageUrl: downloadURL
+                });
+              } catch (error) {
+                reject(error);
+              }
             }
-    
-            var files = document.getElementById("image").files;
-            var title = document.getElementById("title").value;
-            var subject = document.getElementById("subject").value;
-            var exerciseType = document.getElementById("exerciseType").value;
-    
-            if (files.length > 0 && title) {
-                var promises = [];
-    
-                for (var i = 0; i < files.length; i++) {
-                    (function(file) {
-                        var folderName = "";
-    
-                        if (subject === "Toan") {
-                            folderName = "test/toan/" + (exerciseType === "LyThuyet" ? "daiso" : "hinhhoc");
-                        } else {
-                            folderName = "test/" + subject.toLowerCase() + (exerciseType === "LyThuyet" ? "/lythuyet" : "/baitap");
-                        }
-    
-                        var storageRef = firebase.storage().ref().child(folderName + "/" + title + "/" + file.name);
-                        uploadTask = storageRef.put(file);
-    
-                        var promise = new Promise(function(resolve, reject) {
-                            uploadTask.on(
-                                "state_changed",
-                                function(snapshot) {
-                                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                    var progressBar = document.querySelector("#progress .progress-bar");
-                                    progressBar.style.width = progress.toFixed(2) + "%";
-                                    progressBar.setAttribute("aria-valuenow", progress.toFixed(2));
-                                    progressBar.innerHTML = progress.toFixed(2) + "%";
-    
-                                    // Kiểm tra xem tiến trình đã hoàn thành 100% chưa
-                                    if (progress === 100) {
-                                        progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
-                                    }
-                                },
-                                function(error) {
-                                    reject(error);
-                                },
-                                function() {
-                                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                                        resolve({
-                                            title: title,
-                                            imageUrl: downloadURL
-                                        });
-                                    });
-                                }
-                            );
-                        });
-    
-                        promises.push(promise);
-                    })(files[i]);
-                }
-    
-                Promise.all(promises)
-                    .then(function(dataArray) {
-                        var databaseRef = firebase.database().ref("uploads");
-                        var newDataRef = databaseRef.child(subject).child(exerciseType).child(title);
-    
-                        dataArray.forEach(function(data) {
-                            newDataRef.push().set(data);
-                        });
-    
-                        document.getElementById("uploadForm").reset();
-    
-                        var thumbnailsContainer = document.getElementById("thumbnails");
-                        thumbnailsContainer.innerHTML = "";
-    
-                        var progressContainer = document.getElementById("progress");
-                        var progressBar = progressContainer.querySelector(".progress-bar");
-    
-                        progressBar.style.width = "0%";
-                        progressBar.setAttribute("aria-valuenow", "0");
-                        progressBar.innerHTML = "0%";
-    
-                        progressContainer.style.display = "block";
-    
-                        // Gán lại giá trị môn học và loại bài tập được chọn trước đó
-                        previousSubject = subject;
-                        previousExerciseType = exerciseType;
-    
-                        // Chọn lại mục môn học và loại bài tập
-                        document.getElementById("subject").value = previousSubject;
-                        document.getElementById("exerciseType").value = previousExerciseType;
-    
-                        alert("Upload thành công");
-                    })
-                    .catch(function(error) {
-                        console.log("Lỗi tải lên ảnh: " + error);
-                        alert("Đã xảy ra lỗi trong quá trình upload");
-                    });
-            } else {
-                alert("Vui lòng chọn ảnh và nhập tiêu đề");
-            }
+          );
         });
-    
-        // Lắng nghe sự kiện thay đổi input file
-        document.getElementById("image").addEventListener("change", function(e) {
-            var thumbnailsContainer = document.getElementById("thumbnails");
-            thumbnailsContainer.innerHTML = "";
-    
-            var files = e.target.files;
-    
-            Array.from(files).forEach(function(file) {
-                var reader = new FileReader();
-    
-                reader.onload = function(e) {
-                    var thumbnail = document.createElement("img");
-                    thumbnail.classList.add("thumbnail");
-                    thumbnail.src = e.target.result;
-                    thumbnailsContainer.appendChild(thumbnail);
-                };
-    
-                reader.readAsDataURL(file);
-            });
-        });
+
+        promises.push(promise);
+      }
+
+      const dataArray = await Promise.all(promises);
+
+      const databaseRef = firebase.database().ref("uploads");
+      const newDataRef = databaseRef.child(subject).child(exerciseType);
+
+      dataArray.forEach(function(data) {
+        const newImageRef = newDataRef.push();
+        newImageRef.child("title").set(data.title);
+        newImageRef.child("imageUrl").set(data.imageUrl);
+      });
+
+      // Reset form and display success message
+      document.getElementById("uploadForm").reset();
+      alert("Upload thành công");
+
+      // Reset thumbnails and progress bar
+      const thumbnailsContainer = document.getElementById("thumbnails");
+      thumbnailsContainer.innerHTML = "";
+
+      const progressContainer = document.getElementById("progress");
+      const progressBar = progressContainer.querySelector(".progress-bar");
+
+      progressBar.style.width = "0%";
+      progressBar.setAttribute("aria-valuenow", "0");
+      progressBar.innerHTML = "0%";
+
+      progressContainer.style.display = "block";
+
+      // Lưu giá trị môn học và loại bài tập được chọn trước đó
+      previousSubject = subject;
+      previousExerciseType = exerciseType;
+
+      // Chọn lại mục môn học và loại bài tập
+      document.getElementById("subject").value = previousSubject;
+      document.getElementById("exerciseType").value = previousExerciseType;
+    } catch (error) {
+      console.log("Lỗi tải lên ảnh: " + error);
+      alert("Đã xảy ra lỗi trong quá trình upload");
+    }
+  } else {
+    alert("Vui lòng chọn ảnh và nhập tiêu đề");
+  }
+});
+
+// Lắng nghe sự kiện thay đổi input file
+document.getElementById("image").addEventListener("change", function(e) {
+  const thumbnailsContainer = document.getElementById("thumbnails");
+  thumbnailsContainer.innerHTML = "";
+
+  const files = e.target.files;
+
+  Array.from(files).forEach(function(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      const thumbnail = document.createElement("img");
+      thumbnail.classList.add("thumbnail");
+      thumbnail.src = e.target.result;
+      thumbnailsContainer.appendChild(thumbnail);
+    };
+
+    reader.readAsDataURL(file);
+  });
+});
 </script>
 
 </body>

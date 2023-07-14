@@ -750,6 +750,7 @@ nav .content .links {
     .content .links #show-features:checked~ul,
     .content .links #show-features1:checked~ul,
     .content .links #show-features2:checked~ul,
+    .content .links #show-features3:checked~ul,
     .content .links #show-services:checked~ul,
     .content .links #show-items:checked~ul {
         max-height: 100vh;
