@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Login 10</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/font-awesome-6-pro/css/fontawesome6.css">
+    <link rel="stylesheet" href="css/login.css">
+    <style>
+.home-button {
+  display: inline-block;
+  transition: transform 1.5s ease-in-out; /* Thời gian chuyển đổi tăng lên 1.5 giây */
+}
+
+.home-button button {
+  background: #4CAF50; /* Màu nền ban đầu */
+  border: none;
+  color: white;
+  text-align: center;
+  display: inline-block;
+  transition: background 1.5s ease-in-out, border-radius 1.5s ease-in-out; /* Thêm chuyển đổi border-radius */
+  border-radius: 15px;
+}
+
+.home-button:hover button {
+  background: #FF1493; /* Chuyển sang màu hồng khi hover */
+  border-radius: 0px; /* Xóa border-radius khi hover */
+}
+
+.home-button:hover {
+  transform: scale(1.1); /* Tăng kích thước khi hover */
+}
+
+    </style>
+  </head>
+  <body class="img js-fullheight" style="background-image: url(./image/bg.jpg);">
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-center mb-5">
+            <h2 class="heading-section">Đăng nhập   <a href="index.html" class="home-button"><button><i class="fa-regular fa-house-chimney"></i></button></a>   </h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-6 col-lg-4">
+            <div class="login-wrap p-0">
+              <form class="signin-form">
+                <div class="form-group">
+                  <input id="tendangnhap" type="text" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                  <input id="matkhau" type="password" class="form-control" placeholder="Password" required>
+                  <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="form-control btn btn-primary submit px-3">Đăng nhập</button>
+                </div>
+                <div class="form-group d-md-flex">
+                  <div class="w-50">
+                    <a href="#" style="color: #fff">Forgot Password</a>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+<!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+
+<!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+
+<!-- Add Firebase products that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+
+  
+    <script>
+            // Cấu hình Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyCg_mOb92Ad9mUFcSSs7_0Qn7dMwq0msx8",
+                authDomain: "a7-d9048.firebaseapp.com",
+                databaseURL: "https://a7-d9048-default-rtdb.firebaseio.com",
+                projectId: "a7-d9048",
+                storageBucket: "a7-d9048.appspot.com",
+                messagingSenderId: "364919846264",
+                appId: "1:364919846264:web:198a4110d29759bb2c848d",
+                measurementId: "G-FKQP1XJMJN"
+            };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      function dangNhap() {
+        var tendangnhap = document.getElementById('tendangnhap').value;
+        var matkhau = document.getElementById('matkhau').value;
+
+        firebase.auth().signInWithEmailAndPassword(tendangnhap, matkhau)
+        .then((userCredential) => {
+          // Đăng nhập thành công, chuyển hướng người dùng về trang upfile(hoanchinh).html
+          window.location.href = "./upfile(hoanchinh).html";
+        })
+        .catch((error) => {
+          // Xử lý lỗi ở đây
+          alert('Sai tên đăng nhập hoặc mật khẩu! Lỗi: ' + error.message);
+        });
+      }
+
+      (function($) {
+        "use strict";
+      
+        var fullHeight = function() {
+          $('.js-fullheight').css('height', $(window).height());
+          $(window).resize(function(){
+            $('.js-fullheight').css('height', $(window).height());
+          });
+        };
+        fullHeight();
+      
+        $(".toggle-password").click(function() {
+          $(this).toggleClass("fa-eye fa-eye-slash");
+          var input = $($(this).attr("toggle"));
+          if (input.attr("type") == "password") {
+            input.attr("type", "text");
+          } else {
+            input.attr("type", "password");
+          }
+        });
+      
+        document.querySelector('.signin-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          dangNhap();
+        });
+      
+      })(jQuery);
+    </script>
+
+  </body>
+</html>
