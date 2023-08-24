@@ -64,8 +64,7 @@
                 </div>
                 <div class="form-group d-md-flex">
                   <div class="w-50">
-                    <!-- nút quên mật khẩu chưa hoàn thiện -->
-                    <!-- <a href="#" style="color: #fff">Forgot Password</a> -->
+                    <a href="#" id="forgot-password-link" style="color: #fff">Forgot Password</a>
                   </div>
                 </div>
               </form>
@@ -73,7 +72,11 @@
           </div>
         </div>
       </div>
+      <div class="alert alert-info d-none" id="reset-alert" role="alert">
+        Đã gửi về email của bạn vui lòng check email để đổi mật khẩu.
+    </div>
     </section>
+
 
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -154,6 +157,42 @@
       
       })(jQuery);
       
+      
+      
+    // Xử lý khi người dùng ấn nút "Quên Mật Khẩu"
+    document.getElementById('forgot-password-link').addEventListener('click', function(e) {
+      e.preventDefault();
+
+      const email = prompt('Enter your email:');
+      if (email) {
+        // Kiểm tra email có tồn tại trong Firebase Authentication hay không
+        firebase.auth().fetchSignInMethodsForEmail(email)
+          .then((providers) => {
+            if (providers.length === 0) {
+              alert('Email không tồn tại trong hệ thống.');
+              return;
+            }
+
+            // Gửi email đổi mật khẩu
+            firebase.auth().sendPasswordResetEmail(email)
+              .then(() => {
+                // Hiển thị thông báo Bootstrap
+                const resetAlert = document.getElementById('reset-alert');
+                resetAlert.classList.remove('d-none');
+                resetAlert.classList.add('alert-success');
+                resetAlert.textContent = 'Đã gửi về email của bạn vui lòng check email để đổi mật khẩu.';
+              })
+              .catch((error) => {
+                // Hiển thị thông báo lỗi Bootstrap
+                const resetAlert = document.getElementById('reset-alert');
+                resetAlert.classList.remove('d-none');
+                resetAlert.classList.add('alert-danger');
+                resetAlert.textContent = 'Error sending password reset email: ' + error.message;
+              });
+          });
+      }
+    });
+
     </script>
 
   </body>
