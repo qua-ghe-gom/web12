@@ -79,13 +79,17 @@
         </div>
 
 
-        <label for="areaSelector">Chọn khu vực:</label>
+        <label for="areaSelector">Chọn mục:</label>
         <select id="areaSelector">
             <option value="uploads/Toan/LyThuyet">Toán - Lý thuyết</option>
             <option value="uploads/Toan/BaiTap">Toán - Bài tập</option>
             <!--  -->
+                        <option value="#">-------------</option>
+            <!--  -->
             <option value="uploads/Ly/LyThuyet">Lý - Lý thuyết</option>
             <option value="uploads/Ly/BaiTap">Lý - Bài tập</option>
+            <!--  -->
+                        <option value="#">-------------</option>
             <!--  -->
             <option value="uploads/Hoa/LyThuyet">Hóa - Lý thuyết</option>
             <option value="uploads/Hoa/BaiTap">Hóa - Bài tập</option>
@@ -350,17 +354,12 @@ document.addEventListener("keydown", function (event) {
         }
     }
 });
+
+
+
+
 /* chọn chỗ để vô xoá */
-// ...
-/* var folderSelect = document.getElementById('folderSelect');
-    folderSelect.addEventListener('change', function() {
-        var selectedFolder = folderSelect.value;
-        databaseRef = firebase.database().ref('uploads/' + selectedFolder);
-        // tải lại ảnh từ thư mục mới
-    }); */
-    // ...
-    // Sự kiện khi người dùng thay đổi khu vực
-// Event listener cho areaSelector
+
 document.getElementById("areaSelector").addEventListener("change", function() {
     var selectedArea = this.value;
     databaseRef = firebase.database().ref(selectedArea);
