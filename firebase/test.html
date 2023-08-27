@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        /* Đặt các CSS styles tại đây */
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        h5 {
+            color: black;
+        }
+
+        .card {
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .gallery-title {
+            margin-top: 20px;
+        }
+
+        .gallery-title h1 {
+            font-size: 36px;
+            text-align: center;
+        }
+
+        .gallery-title h1 small {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: auto;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .modal-body img {
+            width: auto;
+            height: auto;
+            max-height: 600px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 10px;
+            }
+
+            .gallery-title h1 {
+                font-size: 28px;
+            }
+
+            .gallery-title h1 small {
+                font-size: 16px;
+            }
+
+            .gallery img {
+                margin-bottom: 30px;
+            }
+
+            .modal-body img {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gallery-title">
+            <h1>Lấy Ảnh <small>Responsive</small></h1>
+        </div>
+        <div class="row" id="gallery"></div>
+    </div>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="modalImages"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary mr-2" id="prevButton">Quay lại</button>
+                    <button class="btn btn-primary" id="nextButton">Tiếp theo</button>
+                    <button class="btn btn-danger ml-auto" id="deleteButton">Xoá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <script>
+        // Thông tin cấu hình Firebase
+        const firebaseConfig = {
+    apiKey: "AIzaSyCg_mOb92Ad9mUFcSSs7_0Qn7dMwq0msx8",
+    authDomain: "a7-d9048.firebaseapp.com",
+    projectId: "a7-d9048",
+    storageBucket: "a7-d9048.appspot.com",
+    messagingSenderId: "364919846264",
+    appId: "1:364919846264:web:198a4110d29759bb2c848d",
+    measurementId: "G-FKQP1XJMJN"
+  };
+
+        // Khởi tạo Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Reference đến danh sách ảnh trong Realtime Database
+        var databaseRef = firebase.database().ref('uploads/Toan/LyThuyet');
+
+        // Lấy và hiển thị danh sách ảnh đã tải lên
+        databaseRef.once('value').then(function(snapshot) {
+            var uploads = snapshot.val();
+
+            if (uploads) {
+                var groupedUploads = {};
+
+                // Lấy danh sách ảnh và nhóm theo tiêu đề
+                Object.keys(uploads).forEach(function(key) {
+                    var upload = uploads[key];
+                    var title = upload.title;
+
+                    if (groupedUploads[title]) {
+                        groupedUploads[title].push(upload);
+                    } else {
+                        groupedUploads[title] = [upload];
+                    }
+                });
+
+                var galleryElement = document.getElementById("gallery");
+
+                // Hiển thị danh sách ảnh
+                Object.keys(groupedUploads).forEach(function(title) {
+                    var cardElement = document.createElement("div");
+                    cardElement.classList.add("col-md-4", "mb-4");
+                    var cardHtml = `
+                        <div class="card">
+                            <img class="card-img-top" src="${groupedUploads[title][0].imageUrl}" alt="${title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${title}</h5>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#imageModal" onclick="showImageModal(${JSON.stringify(groupedUploads[title])})">Xem ảnh</button>
+                                <button class="btn btn-danger" onclick="deleteDataByTitle('${title}')">Xoá</button>
+                            </div>
+                        </div>
+                    `;
+                    cardElement.innerHTML = cardHtml;
+                    galleryElement.appendChild(cardElement);
+                });
+            } else {
+                var noDataElement = document.createElement("p");
+                noDataElement.classList.add("text-center");
+                noDataElement.textContent = "Không có ảnh.";
+                var galleryElement = document.getElementById("gallery");
+                galleryElement.appendChild(noDataElement);
+            }
+        }).catch(function(error) {
+            console.log("Lỗi lấy danh sách ảnh: " + error);
+        });
+
+        // Xử lý xoá dữ liệu dựa trên tiêu đề
+        function deleteDataByTitle(title) {
+            var confirmDelete = window.confirm("Bạn có chắc muốn xoá mục này và tất cả ảnh đi kèm?");
+            if (confirmDelete) {
+                var refToDelete = firebase.database().ref('uploads/Toan/LyThuyet').orderByChild('title').equalTo(title);
+                refToDelete.once('value').then(function(snapshot) {
+                    snapshot.forEach(function(childSnapshot) {
+                        var upload = childSnapshot.val();
+                        deleteImageFromStorage(upload.imageUrl);
+                        childSnapshot.ref.remove();
+                    });
+                    location.reload();
+                });
+            }
+        }
+
+        // Xử lý xoá ảnh từ Firebase Storage
+        function deleteImageFromStorage(imageUrl) {
+            var fileName = imageUrl.split('/').pop();
+            var storageRef = firebase.storage().ref('uploads/Toan/LyThuyet/' + fileName);
+            storageRef.delete().then(function() {
+                console.log("Đã xoá ảnh từ Storage.");
+            }).catch(function(error) {
+                console.log("Lỗi xoá ảnh từ Storage: " + error);
+            });
+        }
+
+        // Xử lý hiển thị modal và điều hướng ảnh
+        function showImageModal(images) {
+            var modalTitleElement = document.getElementById("modalTitle");
+            var modalImagesElement = document.getElementById("modalImages");
+            var prevButton = document.getElementById("prevButton");
+            var nextButton = document.getElementById("nextButton");
+            var deleteButton = document.getElementById("deleteButton");
+
+            // Xử lý hiển thị modal và các phần liên quan
+
+            // Xử lý sự kiện nút "Xoá"
+
+            // Xử lý sự kiện nút "Quay lại" và "Tiếp theo"
+
+        }
+
+        // Hàm lấy chỉ số của ảnh hiện tại trong modal
+        function getCurrentIndex() {
+            var visibleImage = document.querySelector("#modalImages img:not(.d-none)");
+            var imageElements = Array.from(document.querySelectorAll("#modalImages img"));
+            return imageElements.indexOf(visibleImage);
+        }
+
+        // Xử lý sự kiện phím mũi tên trái/phải
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowRight") {
+                var currentIndex = getCurrentIndex();
+                showNextImage(currentIndex, images);
+            } else if (event.key === "ArrowLeft") {
+                var currentIndex = getCurrentIndex();
+                showPrevImage(currentIndex, images);
+            }
+        });
+
+    </script>
+</body>
+</html>
