@@ -98,7 +98,7 @@ h5{
 
     <div class="container">
         <div class="form-group">
-            <label for="imagePath">Chọn đường dẫn:</label>
+            <label for="imagePath">Chọn môn học:</label>
             <select class="form-control" id="imagePath">
                 <option value="uploads/Toan/LyThuyet">Toán-Đại Số</option>
                 <option value="uploads/Toan/BaiTap">Toán-Hình Học</option>
@@ -162,7 +162,7 @@ h5{
 
 
 
-        
+        /* đổi đường dẫn file */
         // Gọi hàm loadDataFromPath với giá trị mặc định khi trang được tải
         document.getElementById("imagePath").addEventListener("change", function() {
             var selectedPath = this.value;
@@ -182,13 +182,6 @@ h5{
         });
 
 
-        
-        /* đổi đường dẫn file */
-        document.getElementById("imagePath").addEventListener("change", function() {
-            var selectedPath = this.value;
-            loadDataFromPath(selectedPath);
-        });
-        
         
         /* đồng bộ sự thay đổi trên html */
         function loadDataFromPath(path) {
