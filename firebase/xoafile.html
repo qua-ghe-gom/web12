@@ -5,70 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
-        body{
-            background-color: black;
-            color: white;
-        }
-        h5{
-            color: black;
-        }
-        .card {
-            min-height: 100%;
-            min-width: 100%;
-        }
+:root {
+  --primary-background: #1a1a1a;
+  --primary-text-color: #f1f1f1;
+  --secondary-text-color: #333;
+  --highlight-color: #999;
+  --primary-button-color: #007BFF;
+  --hover-button-color: #0056b3;
+  --font-family: 'Arial', sans-serif;
+}
 
-        .gallery-title {
-            margin-top: 20px;
-        }
+body {
+  font-family: var(--font-family);
+  background-color: var(--primary-background);
+  color: var(--primary-text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
 
-        .gallery-title h1 {
-            font-size: 36px;
-            text-align: center;
-        }
+.container {
+  margin-top: 2rem;
+}
 
-        .gallery-title h1 small {
-            font-size: 18px;
-            color: #999;
-        }
+.gallery-title, .gallery-title h1 {
+  margin-top: 20px;
+}
 
-        .gallery img {
-            width: 100%;
-            height: auto;
-        }
+.gallery-title h1 {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
 
-        .modal-body {
-            text-align: center;
-        }
+.gallery-title h1 small {
+  font-size: 18px;
+  color: var(--highlight-color);
+}
 
-        .modal-body img {
-            width: auto;
-            height: auto;
-            max-height: 600px;
-            max-width: 100%;
-            margin: 0 auto;
-        }
+nav {
+  background-color: var(--primary-text-color);
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
 
-        @media (max-width: 768px) {
-            .card-body {
-                padding: 10px;
-            }
+nav p {
+  margin: 0;
+  color: var(--secondary-text-color);
+}
 
-            .gallery-title h1 {
-                font-size: 28px;
-            }
+#logout-button {
+  background-color: var(--primary-button-color);
+  color: var(--primary-text-color);
+  border: none;
+  padding: 8px 15px;
+  margin-left: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-            .gallery-title h1 small {
-                font-size: 16px;
-            }
+#logout-button:hover {
+  background-color: var(--hover-button-color);
+}
 
-            .gallery img {
-                margin-bottom: 30px;
-            }
+.form-group {
+  margin-bottom: 2rem;
+}
 
-            .modal-body img {
-                max-height: 300px;
-            }
-        }
+.gallery img {
+  transition: transform 0.3s ease;
+  border-radius: 5px;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
+}
+
+.modal-body img {
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+h5{
+    color: #1a1a1a;
+}
+
     </style>
 </head>
 <body>
@@ -77,23 +100,24 @@
         <div class="form-group">
             <label for="imagePath">Chọn đường dẫn:</label>
             <select class="form-control" id="imagePath">
-                <option value="uploads/Toan/LyThuyet">uploads/Toan/LyThuyet</option>
-                <option value="uploads/Toan/BaiTap">uploads/Toan/BaiTap</option>
-                <option>===============</option>
-                <option value="uploads/Ly/LyThuyet">uploads/Ly/LyThuyet</option>
-                <option value="uploads/Ly/BaiTap">uploads/Ly/BaiTap</option>
-                <option>===============</option>
-                <option value="uploads/Hoa/LyThuyet">uploads/Hoa/LyThuyet</option>
-                <option value="uploads/Hoa/BaiTap">uploads/Hoa/BaiTap</option>
+                <option value="uploads/Toan/LyThuyet">Toán-Đại Số</option>
+                <option value="uploads/Toan/BaiTap">Toán-Hình Học</option>
+                <option disabled>===============</option>
+                <option value="uploads/Ly/LyThuyet">Lý-lý thuyết</option>
+                <option value="uploads/Ly/BaiTap">Lý-bài tập</option>
+                <option disabled>===============</option>
+                <option value="uploads/Hoa/LyThuyet">Hoá-lý thuyết</option>
+                <option value="uploads/Hoa/BaiTap">Hoá-bài tập</option>
             </select>
         </div>
         
         <div class="gallery-title">
             <h1>Quản lý <small>bài học</small></h1>
-            <div id="user-info"><!-- hiện phần user và đăng xuất -->
-                <p style="z-index: 1;">Chào cậu, <span id="user-email"></span>         <button id="logout-button">Đăng xuất</button></p>
-            </div><!-- ========================================= -->
+            <nav id="user-info">
+                <p>Chào cậu, <span id="user-email"></span> <button id="logout-button">Đăng xuất</button></p>
+            </nav>
         </div>
+
         <div id="gallery" class="row"></div>
     </div>
 
