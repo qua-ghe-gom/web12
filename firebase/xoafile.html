@@ -74,8 +74,25 @@
 <body>
 
     <div class="container">
+        <div class="form-group">
+            <label for="imagePath">Chọn đường dẫn:</label>
+            <select class="form-control" id="imagePath">
+                <option value="uploads/Toan/LyThuyet">uploads/Toan/LyThuyet</option>
+                <option value="uploads/Toan/BaiTap">uploads/Toan/BaiTap</option>
+                <option>===============</option>
+                <option value="uploads/Ly/LyThuyet">uploads/Ly/LyThuyet</option>
+                <option value="uploads/Ly/BaiTap">uploads/Ly/BaiTap</option>
+                <option>===============</option>
+                <option value="uploads/Hoa/LyThuyet">uploads/Hoa/LyThuyet</option>
+                <option value="uploads/Hoa/BaiTap">uploads/Hoa/BaiTap</option>
+            </select>
+        </div>
+        
         <div class="gallery-title">
             <h1>Lấy Ảnh <small>Responsive</small></h1>
+            <div id="user-info"><!-- hiện phần user và đăng xuất -->
+                <p style="z-index: 1;">Chào cậu, <span id="user-email"></span>         <button id="logout-button">Đăng xuất</button></p>
+            </div><!-- ========================================= -->
         </div>
         <div id="gallery" class="row"></div>
     </div>
@@ -104,6 +121,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-auth.js"></script>
     <script>
         // Cấu hình Firebase
         const firebaseConfig = {
@@ -117,10 +135,26 @@
         };
         // Khởi tạo Firebase
         firebase.initializeApp(firebaseConfig);
+
+        // Gọi hàm loadDataFromPath với giá trị mặc định khi trang được tải
+        loadDataFromPath("uploads/Toan/LyThuyet");
         
-        // Lấy và hiển thị danh sách ảnh đã tải lên
-        var databaseRef = firebase.database().ref('uploads/Toan/LyThuyet');
-        databaseRef.once('value').then(function(snapshot) {
+        /* đổi đường dẫn file */
+        document.getElementById("imagePath").addEventListener("change", function() {
+            var selectedPath = this.value;
+            loadDataFromPath(selectedPath);
+        });
+        
+        
+        /* đồng bộ sự thay đổi trên html */
+        function loadDataFromPath(path) {
+            // Xóa dữ liệu hiện có trên gallery
+            var galleryElement = document.getElementById("gallery");
+            galleryElement.innerHTML = "";
+            
+            var databaseRef = firebase.database().ref(path);
+            // Phần còn lại của mã để lấy và hiển thị dữ liệu giống như bạn đã làm
+            databaseRef.once('value').then(function(snapshot) {
             var uploads = snapshot.val();
         
             if (uploads) {
@@ -203,12 +237,19 @@
         }).catch(function(error) {
             console.log("Lỗi lấy danh sách ảnh: " + error);
         });
+        }
+                
+
+        // Lấy và hiển thị danh sách ảnh đã tải lên
+        /* var databaseRef = firebase.database().ref('uploads/Toan/LyThuyet'); */
+        
         
         // Xử lý xoá dữ liệu dựa trên tiêu đề
         function deleteDataByTitle(title) {
+            var currentPath = document.getElementById("imagePath").value; // Lấy đường dẫn hiện tại từ ô chọn
             var confirmDelete = window.confirm("Bạn có chắc muốn xoá mục này và tất cả ảnh đi kèm?");
             if (confirmDelete) {
-                var refToDelete = firebase.database().ref('uploads/Toan/LyThuyet').orderByChild('title').equalTo(title);
+                var refToDelete = firebase.database().ref(currentPath).orderByChild('title').equalTo(title); // Sử dụng đường dẫn động
                 refToDelete.once('value').then(function(snapshot) {
                     snapshot.forEach(function(childSnapshot) {
                         var upload = childSnapshot.val();
@@ -222,14 +263,16 @@
 
         // Xử lý xoá ảnh từ Firebase Storage
         function deleteImageFromStorage(imageUrl) {
+            var currentPath = document.getElementById("imagePath").value; // Lấy đường dẫn hiện tại từ ô chọn
             var fileName = imageUrl.split('/').pop();
-            var storageRef = firebase.storage().ref('uploads/Toan/LyThuyet/' + fileName);
+            var storageRef = firebase.storage().ref(currentPath + '/' + fileName); // Sử dụng đường dẫn động
             storageRef.delete().then(function() {
                 console.log("Đã xoá ảnh từ Storage.");
             }).catch(function(error) {
                 console.log("Lỗi xoá ảnh từ Storage: " + error);
             });
         }
+
         
         // Hiển thị cửa sổ modal khi nhấp vào ảnh
         function showImageModal(images) {
@@ -359,6 +402,40 @@
                 }
             }
         });
+
+                
+        /* check đăng nhập */
+        firebase.auth().onAuthStateChanged(function(user) {
+                if (!user) {
+                // Người dùng chưa đăng nhập, chuyển hướng họ về trang đăng nhập
+                window.location.href = "../dangnhap.html";
+                } else {
+                // Người dùng đã đăng nhập, bạn có thể cho phép họ truy cập trang hoặc tải dữ liệu mà họ cần
+                }
+            });
+        /* chào người đăng nhập và nút đăng xuất */
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+            // User is signed in, display their email
+            document.getElementById('user-email').innerText = user.email;
+            document.getElementById('user-info').style.display = 'block';
+            } else {
+            // No user is signed in
+            // Redirect to login page or handle this situation
+            document.getElementById('user-info').style.display = 'none';
+            }
+        });
+
+        document.getElementById('logout-button').addEventListener('click', function() {
+            firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+            // Redirect to login page or handle this situation
+            }).catch(function(error) {
+            // An error happened.
+            console.error('Error signing out', error);
+            });
+        });
+
         </script>
         
 </body>
