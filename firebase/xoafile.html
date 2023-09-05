@@ -89,7 +89,7 @@
         </div>
         
         <div class="gallery-title">
-            <h1>Lấy Ảnh <small>Responsive</small></h1>
+            <h1>Quản lý <small>bài học</small></h1>
             <div id="user-info"><!-- hiện phần user và đăng xuất -->
                 <p style="z-index: 1;">Chào cậu, <span id="user-email"></span>         <button id="logout-button">Đăng xuất</button></p>
             </div><!-- ========================================= -->
@@ -136,8 +136,28 @@
         // Khởi tạo Firebase
         firebase.initializeApp(firebaseConfig);
 
+
+
+        
         // Gọi hàm loadDataFromPath với giá trị mặc định khi trang được tải
-        loadDataFromPath("uploads/Toan/LyThuyet");
+        document.getElementById("imagePath").addEventListener("change", function() {
+            var selectedPath = this.value;
+            // Lưu giá trị đường dẫn hiện tại vào localStorage
+            localStorage.setItem('currentPath', selectedPath);
+            loadDataFromPath(selectedPath);
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            var savedPath = localStorage.getItem('currentPath');
+            if (savedPath) {
+                // Thiết lập giá trị cho ô chọn imagePath dựa trên giá trị đã lưu trước đó
+                document.getElementById("imagePath").value = savedPath;
+                loadDataFromPath(savedPath); // Tải dữ liệu dựa trên đường dẫn đã lưu
+            } else {
+                loadDataFromPath("uploads/Toan/LyThuyet"); // Nếu không có giá trị đã lưu, tải dữ liệu từ đường dẫn mặc định
+            }
+        });
+
+
         
         /* đổi đường dẫn file */
         document.getElementById("imagePath").addEventListener("change", function() {
