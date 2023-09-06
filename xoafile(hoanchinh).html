@@ -91,7 +91,18 @@ nav p {
 h5{
     color: #1a1a1a;
 }
+/* button delete */
+.upload-container .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    width: 100%;
+    margin-top: 10px;  /* thêm khoảng cách giữa các nút */
+}
 
+.upload-container .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
     </style>
 </head>
 <body>
@@ -112,7 +123,11 @@ h5{
         </div>
         
         <div class="gallery-title">
-            <h1>Quản lý <small>bài học</small></h1>
+            <h1>Quản lý <small>bài học</small>
+                    <!--button delete  -->
+                    <button id="manage-btn" class="btn btn-secondary">mục up bài</button><br><br>
+                    <!-- ============= -->
+            </h1>
             <nav id="user-info">
                 <p>Chào cậu, <span id="user-email"></span> <button id="logout-button">Đăng xuất</button></p>
             </nav>
@@ -159,6 +174,13 @@ h5{
         };
         // Khởi tạo Firebase
         firebase.initializeApp(firebaseConfig);
+
+
+        /* chuyển sang form xoá ảnh */
+        document.getElementById("manage-btn").addEventListener("click", function() {
+                window.location.href = "./upfile(hoanchinh).html";
+            });
+        /* ====================== */
 
 
 
@@ -445,7 +467,7 @@ h5{
         firebase.auth().onAuthStateChanged(function(user) {
                 if (!user) {
                 // Người dùng chưa đăng nhập, chuyển hướng họ về trang đăng nhập
-                window.location.href = "../dangnhap.html";
+                window.location.href = "dangnhap.html";
                 } else {
                 // Người dùng đã đăng nhập, bạn có thể cho phép họ truy cập trang hoặc tải dữ liệu mà họ cần
                 }

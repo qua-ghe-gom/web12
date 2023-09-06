@@ -112,6 +112,20 @@
             color: black; /* Black text */
         }
 
+
+        /* button delete */
+        .upload-container .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            width: 100%;
+            margin-top: 10px;  /* thêm khoảng cách giữa các nút */
+        }
+
+        .upload-container .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
     </style>
         
         
@@ -125,6 +139,12 @@
         <div id="user-info"><!-- hiện phần user và đăng xuất -->
             <p style="z-index: 1;">Chào cậu, <span id="user-email"></span>         <button id="logout-button">Đăng xuất</button></p>
         </div><!-- ========================================= -->
+        
+        
+        <!--button delete  -->
+        <button id="manage-btn" class="btn btn-secondary">mục quản lý bài</button><br><br>
+        <!-- =============  upfile(hoanchinh).html-->
+
     <h3>Form Upload Ảnh</h3>
     <form id="uploadForm" enctype="multipart/form-data">
         <div class="form-group">
@@ -365,6 +385,14 @@
             };
         // Khởi tạo Firebase
 firebase.initializeApp(firebaseConfig);
+
+
+/* chuyển sang form xoá ảnh */
+document.getElementById("manage-btn").addEventListener("click", function() {
+        window.location.href = "./xoafile(hoanchinh).html";
+    });
+/* ====================== */
+
 
 // Lưu trữ giá trị môn học và loại bài tập được chọn trước đó
 let previousSubject = "";
