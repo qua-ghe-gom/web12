@@ -4,7 +4,7 @@ const searchInput = document.querySelector('input');
 const searchCells = document.querySelectorAll('td');
 const selectElement = document.createElement('select');
 const selectCells = document.querySelectorAll('td');
-const subjects = ['Tìm Môn Học','SHCN', 'Sinh', 'Anh văn BN', 'Lý', 'Anh văn', 'Công nghệ', 'GDCD', 'Hoá', 'Quốc phòng', 'Địa', 'Toán', 'Ngữ văn', 'Thể dục', 'Nghề', 'Tin học'];
+const subjects = ['Tìm Môn Học','SHCN', 'Sinh', 'Lý', 'Anh văn', 'Công nghệ', 'GDCD', 'Hoá', 'Quốc phòng', 'Địa', 'Toán', 'Ngữ văn', 'Thể dục', 'Nghề', 'Tin học'];
 
 // Thêm các tùy chọn vào phần tử select
 for (let i = 0; i < subjects.length; i++) {
