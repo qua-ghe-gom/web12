@@ -66,8 +66,6 @@
             <h1 style="font-size: larger; margin-right: 10px;">Tìm kiếm môn học:</h1>
             <input type="text" placeholder="Tìm Kiếm môn....">    
         </div>
-        <p>*lưu ý dấu gạch dưới dể dùng dễ nhận biết <ins>Ngữ văn</ins> và Anh văn</p>
-        <p>*môn trong ngoặc là được đổi theo yêu cầu giáo viên và các bạn trong lớp</p>
     </div>
 </div>
 
@@ -253,7 +251,66 @@
 
 
 
+<div id="tot-nghiep-thpt">
+    <style>
+        #countdown-container {
+        display: flex;
+        align-items: center;
+    }
 
+    .header {
+        padding-right: 10px; /* Khoảng cách giữa phần tử header và countdown */
+    }
+    /* Đảm bảo chữ không bị tràn ra ngoài */
+
+    #countdown h1 {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+</style>
+<br>
+<div id="countdown-container" style="display: flex;align-items: center;font-size: 20px;">
+    <div class="header">
+        <h1>Kỳ Thi THPT 2024</h1>
+    </div>
+    <div id="countdown" style="padding-top: 15px;">
+        <p id="timer"></p>
+    </div>
+</div>
+<script>
+// Đặt ngày và giờ mục tiêu
+const countDownDate = new Date("June 27, 2024 07:30:00").getTime();
+
+// Cập nhật bộ đếm ngược mỗi 1 giây
+let x = setInterval(function() {
+
+    // Lấy thời gian hiện tại
+    let now = new Date().getTime();
+    
+    // Tính khoảng cách thời gian giữa bây giờ và ngày mục tiêu
+    let distance = countDownDate - now;
+    
+    // Tính toán số ngày, giờ, phút và giây
+    let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    // Hiển thị kết quả trong phần tử có id="timer"
+    document.getElementById("timer").innerHTML = days + " ngày " + hours + " giờ "
+    + minutes + " phút " + seconds + " giây ";
+    
+    // Nếu bộ đếm ngược kết thúc, hiển thị một thông báo
+    if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("timer").innerHTML = "CHÚC CÁC BẠN THI THÀNH CÔNG!";
+    }
+}, 1000);
+
+</script>
+
+</div>
 
 
 
